@@ -341,6 +341,43 @@ body {
 }
 
 /* ============================================================
+   SORTEO EN VIVO CARD
+   ============================================================ */
+.card-sorteo {
+  background: linear-gradient(135deg, rgba(255,0,80,0.12), rgba(255,0,80,0.04));
+  border: 1.5px solid rgba(255,0,80,0.35);
+  text-align: center;
+}
+
+.sorteo-tiktok {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ff0050;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.sorteo-fecha {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.sorteo-cuenta {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #25f4ee;
+  margin-bottom: 10px;
+}
+
+.sorteo-nota {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* ============================================================
    FOOTER
    ============================================================ */
 .footer {
@@ -393,8 +430,17 @@ body {
       <li>Compra en cualquier sucursal CeluCenter</li>
       <li>Registrate en esta pagina con tus datos y ticket de compra</li>
       <li>Recibe tu numero de boleto automaticamente</li>
-      <li>Espera el sorteo — se realizara antes del 11 de junio</li>
+      <li>Sintoniza el sorteo EN VIVO por TikTok el 5 de junio</li>
     </ol>
+  </div>
+
+  <!-- CARD: SORTEO EN VIVO -->
+  <div class="card card-sorteo">
+    <div class="card-title">Sorteo EN VIVO</div>
+    <div class="sorteo-tiktok">TikTok Live</div>
+    <div class="sorteo-fecha">Viernes 5 de Junio &middot; 6:00 PM</div>
+    <div class="sorteo-cuenta">@celucenter</div>
+    <div class="sorteo-nota">El ganador se anunciara en vivo. No te lo pierdas!</div>
   </div>
 
   <!-- CARD: FORMULARIO DE REGISTRO -->
@@ -468,7 +514,7 @@ body {
         <div class="boleto-number" id="boletoNumber">RIFA-0000</div>
       </div>
       <div class="confirmation-note" id="confirmNote">
-        Guarda este numero. El sorteo se realizara antes del 11 de junio.
+        Guarda este numero. El sorteo sera EN VIVO por TikTok (@celucenter) el viernes 5 de junio a las 6:00 PM.
       </div>
       <div class="confirmation-luck">Mucha suerte!</div>
     </div>
