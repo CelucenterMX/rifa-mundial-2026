@@ -585,15 +585,16 @@ function registrarRifa() {
 
   setLoading(true);
 
-  const params = new URLSearchParams({
+  const body = JSON.stringify({
     action: 'registrar_rifa',
     nombre, telefono, email, sucursal, ticket
   });
 
   fetch(APPS_SCRIPT_URL, {
     method: 'POST',
-    body: params,
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    body: body,
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    redirect: 'follow'
   })
   .then(r => r.json())
   .then(data => {

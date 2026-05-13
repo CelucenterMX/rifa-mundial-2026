@@ -60,10 +60,17 @@ function setupHojaRifa() {
 // WEB APP ENDPOINTS
 // =============================================
 function doPost(e) {
-  const action = e.parameter.action;
+  var params;
+  try {
+    params = JSON.parse(e.postData.contents);
+  } catch(err) {
+    params = e.parameter;
+  }
+
+  const action = params.action;
 
   if (action === 'registrar_rifa') {
-    return registrarRifa(e.parameter);
+    return registrarRifa(params);
   }
 
   return jsonResponse({ success: false, message: 'Accion no valida' });
