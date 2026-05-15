@@ -508,14 +508,27 @@ body {
       <div class="confirmation-icon">&#127942;</div>
       <div class="confirmation-title" id="confirmTitle">!Estas participando!</div>
       <div class="boleto-container">
-        <div class="boleto-label">Tu numero de boleto</div>
+        <div class="boleto-label">Tu nuevo boleto</div>
         <div class="boleto-number" id="boletoNumber">RIFA-0000</div>
       </div>
       <div class="confirmation-note" id="confirmNote">
         Guarda este numero. El sorteo sera EN VIVO por TikTok (@celucenter) el viernes 5 de junio a las 6:00 PM.
       </div>
       <div class="confirmation-luck">Mucha suerte!</div>
+      <button class="btn btn-secondary" style="margin-top:16px" onclick="volverARegistrar()">Registrar otra compra</button>
     </div>
+  </div>
+
+  <!-- CARD: CONSULTAR MIS BOLETOS -->
+  <div class="card">
+    <div class="card-title">Consultar mis boletos</div>
+    <div id="consultaAlert" class="alert"></div>
+    <div class="form-group">
+      <label for="consultaTel">Telefono WhatsApp (10 digitos)</label>
+      <input type="tel" id="consultaTel" placeholder="3311234567" maxlength="10" inputmode="numeric">
+    </div>
+    <button class="btn btn-secondary" id="btnConsultar" onclick="consultarBoletos()">Ver mis boletos</button>
+    <div id="resultadoBoletos" style="display:none; margin-top:16px;"></div>
   </div>
 
 </main>
@@ -552,16 +565,65 @@ function setLoading(loading) {
   btn.textContent = loading ? 'Registrando...' : 'Participar en la Rifa';
 }
 
-function showConfirmation(boleto, nombre, isExisting) {
+function showConfirmation(boleto, nombre) {
   document.getElementById('registroForm').style.display = 'none';
   document.getElementById('rifaAlert').className = 'alert';
 
   document.getElementById('boletoNumber').textContent = boleto;
-  document.getElementById('confirmTitle').textContent = isExisting
-    ? 'Ya estas registrado, ' + nombre.split(' ')[0] + '!'
-    : 'Estas participando, ' + nombre.split(' ')[0] + '!';
+  document.getElementById('confirmTitle').textContent = 'Estas participando, ' + nombre.split(' ')[0] + '!';
 
   document.getElementById('confirmacion').classList.add('show');
+}
+
+function volverARegistrar() {
+  document.getElementById('confirmacion').classList.remove('show');
+  document.getElementById('registroForm').style.display = 'block';
+  document.getElementById('regTicket').value = '';
+}
+
+function consultarBoletos() {
+  const tel = document.getElementById('consultaTel').value.trim();
+  if (!/^\d{10}$/.test(tel)) {
+    const el = document.getElementById('consultaAlert');
+    el.textContent = 'Ingresa un telefono valido de 10 digitos';
+    el.className = 'alert alert-error show';
+    setTimeout(() => { el.classList.remove('show'); }, 5000);
+    return;
+  }
+
+  const btn = document.getElementById('btnConsultar');
+  btn.disabled = true;
+  btn.textContent = 'Buscando...';
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'consultar_boletos', telefono: tel }),
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    redirect: 'follow'
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.disabled = false;
+    btn.textContent = 'Ver mis boletos';
+    const div = document.getElementById('resultadoBoletos');
+    if (data.success && data.boletos && data.boletos.length > 0) {
+      let html = '<div style="color:var(--cc-gold);font-weight:700;margin-bottom:10px;">' + data.nombre + ' — ' + data.boletos.length + ' boleto(s)</div>';
+      data.boletos.forEach(b => {
+        html += '<div class="boleto-container" style="margin-bottom:10px;padding:12px;">';
+        html += '<div class="boleto-number" style="font-size:1.5rem;">' + b.boleto + '</div>';
+        html += '<div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;">' + b.sucursal + ' — Ticket: ' + b.ticket + '</div>';
+        html += '</div>';
+      });
+      div.innerHTML = html;
+    } else {
+      div.innerHTML = '<div style="color:var(--text-secondary);font-size:0.85rem;">No se encontraron boletos con ese telefono.</div>';
+    }
+    div.style.display = 'block';
+  })
+  .catch(() => {
+    btn.disabled = false;
+    btn.textContent = 'Ver mis boletos';
+  });
 }
 
 // =============================================
@@ -598,7 +660,7 @@ function registrarRifa() {
   .then(data => {
     setLoading(false);
     if (data.success) {
-      showConfirmation(data.boleto, data.nombre, data.existing || false);
+      showConfirmation(data.boleto, data.nombre);
     } else {
       showAlert(data.message || 'Error al registrar. Intenta de nuevo.', 'error');
     }

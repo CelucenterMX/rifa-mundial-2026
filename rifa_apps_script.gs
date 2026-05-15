@@ -18,6 +18,9 @@
 // CONFIG
 // =============================================
 const HOJA_RIFA = 'Rifa';
+const MACHOTE_SHEET_ID = '19-QtiBnvjUWJ22KgqAXAQdhcN7_PkGEzkUPDZjJRch4';
+const MACHOTE_TAB = 'General';
+const MACHOTE_COL_FOLIO = 2; // Columna B
 
 // =============================================
 // SETUP — Ejecutar una vez para crear headers
@@ -73,6 +76,10 @@ function doPost(e) {
     return registrarRifa(params);
   }
 
+  if (action === 'consultar_boletos') {
+    return consultarBoletos(params);
+  }
+
   return jsonResponse({ success: false, message: 'Accion no valida' });
 }
 
@@ -116,17 +123,12 @@ function registrarRifa(params) {
 
   const datos = hoja.getDataRange().getValues();
 
-  // Buscar si el telefono ya esta registrado (login automatico)
-  for (let i = 1; i < datos.length; i++) {
-    if (String(datos[i][2]) === telefono) {
-      return jsonResponse({
-        success: true,
-        boleto: datos[i][6],
-        nombre: datos[i][1],
-        existing: true,
-        message: 'Ya estas registrado. Aqui esta tu numero de boleto.'
-      });
-    }
+  // Validar que el ticket exista en el machote de ventas (folios reales)
+  if (!validarFolioMachote(ticket)) {
+    return jsonResponse({
+      success: false,
+      message: 'Este numero de ticket no es valido. Verifica que sea el folio correcto de tu ticket de compra.'
+    });
   }
 
   // Verificar que el ticket no haya sido usado
@@ -156,6 +158,77 @@ function registrarRifa(params) {
     existing: false,
     message: 'Registro exitoso. Tu numero de boleto es ' + boleto
   });
+}
+
+// =============================================
+// CONSULTAR BOLETOS POR TELEFONO
+// =============================================
+function consultarBoletos(params) {
+  const telefono = (params.telefono || '').trim();
+
+  if (!/^\d{10}$/.test(telefono)) {
+    return jsonResponse({ success: false, message: 'Telefono invalido' });
+  }
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const hoja = ss.getSheetByName(HOJA_RIFA);
+
+  if (!hoja) {
+    return jsonResponse({ success: false, message: 'Error interno' });
+  }
+
+  const datos = hoja.getDataRange().getValues();
+  var boletos = [];
+  var nombre = '';
+
+  for (let i = 1; i < datos.length; i++) {
+    if (String(datos[i][2]) === telefono) {
+      nombre = datos[i][1];
+      boletos.push({
+        boleto: datos[i][6],
+        sucursal: datos[i][4],
+        ticket: datos[i][5]
+      });
+    }
+  }
+
+  if (boletos.length === 0) {
+    return jsonResponse({ success: false, message: 'No se encontraron boletos con ese telefono' });
+  }
+
+  return jsonResponse({
+    success: true,
+    nombre: nombre,
+    boletos: boletos
+  });
+}
+
+// =============================================
+// VALIDAR FOLIO CONTRA MACHOTE DE VENTAS
+// =============================================
+function validarFolioMachote(ticket) {
+  try {
+    const machote = SpreadsheetApp.openById(MACHOTE_SHEET_ID);
+    const hoja = machote.getSheetByName(MACHOTE_TAB);
+    if (!hoja) return false;
+
+    const lastRow = hoja.getLastRow();
+    if (lastRow < 2) return false;
+
+    const folios = hoja.getRange(2, MACHOTE_COL_FOLIO, lastRow - 1, 1).getValues();
+    const ticketLower = ticket.toLowerCase().trim();
+
+    for (let i = 0; i < folios.length; i++) {
+      if (String(folios[i][0]).toLowerCase().trim() === ticketLower) {
+        return true;
+      }
+    }
+    return false;
+  } catch(err) {
+    // Si no puede acceder al machote, dejar pasar (para no bloquear)
+    Logger.log('Error validando folio: ' + err);
+    return true;
+  }
 }
 
 // =============================================
