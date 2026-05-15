@@ -218,11 +218,27 @@ function validarFolioMachote(ticket) {
     const folios = hoja.getRange(2, MACHOTE_COL_FOLIO, lastRow - 1, 1).getValues();
     const ticketLower = ticket.toLowerCase().trim();
 
+    // Buscar folio exacto y rastrear el máximo numérico del machote
+    let maxFolioNum = 0;
     for (let i = 0; i < folios.length; i++) {
-      if (String(folios[i][0]).toLowerCase().trim() === ticketLower) {
-        return true;
-      }
+      const folioStr = String(folios[i][0]).toLowerCase().trim();
+
+      // Si encontramos exacto, válido
+      if (folioStr === ticketLower) return true;
+
+      // Rastrear el folio numérico más alto del machote
+      const num = parseInt(folioStr.replace(/\D/g, ''));
+      if (!isNaN(num) && num > maxFolioNum) maxFolioNum = num;
     }
+
+    // No está en el machote — ¿es de hoy?
+    // Si su número es mayor al máximo del machote, asumir que es de hoy
+    const ticketNum = parseInt(ticketLower.replace(/\D/g, ''));
+    if (!isNaN(ticketNum) && maxFolioNum > 0 && ticketNum > maxFolioNum) {
+      Logger.log('Folio ' + ticket + ' no está en machote pero es mayor al máximo (' + maxFolioNum + ') — asumiendo hoy ✅');
+      return true;
+    }
+
     return false;
   } catch(err) {
     // Si no puede acceder al machote, dejar pasar (para no bloquear)
