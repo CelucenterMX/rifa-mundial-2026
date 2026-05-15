@@ -216,30 +216,50 @@ function validarFolioMachote(ticket) {
     if (lastRow < 2) return false;
 
     const folios = hoja.getRange(2, MACHOTE_COL_FOLIO, lastRow - 1, 1).getValues();
-    const ticketLower = ticket.toLowerCase().trim();
+    const ticketClean = ticket.toUpperCase().trim();
 
-    // Buscar folio exacto y rastrear el máximo numérico del machote
-    let maxFolioNum = 0;
+    // Extraer prefijo (letras) y número del ticket ingresado
+    const ticketMatch = ticketClean.match(/^([A-Z]+)(\d+)$/);
+    const ticketPrefix = ticketMatch ? ticketMatch[1] : null;
+    const ticketNum = ticketMatch ? parseInt(ticketMatch[2]) : NaN;
+
+    // Mapear máximo numérico por prefijo
+    const maxPorPrefijo = {};
+
     for (let i = 0; i < folios.length; i++) {
-      const folioStr = String(folios[i][0]).toLowerCase().trim();
+      const folioStr = String(folios[i][0]).toUpperCase().trim();
 
-      // Si encontramos exacto, válido
-      if (folioStr === ticketLower) return true;
+      // Coincidencia exacta → válido
+      if (folioStr === ticketClean) return true;
 
-      // Rastrear el folio numérico más alto del machote
-      const num = parseInt(folioStr.replace(/\D/g, ''));
-      if (!isNaN(num) && num > maxFolioNum) maxFolioNum = num;
+      // Rastrear máximo por prefijo
+      const m = folioStr.match(/^([A-Z]+)(\d+)$/);
+      if (m) {
+        const prefix = m[1];
+        const num = parseInt(m[2]);
+        if (isNaN(maxPorPrefijo[prefix]) || num > maxPorPrefijo[prefix]) {
+          maxPorPrefijo[prefix] = num;
+        }
+      }
     }
 
     // No está en el machote — ¿es de hoy?
-    // Si su número es mayor al máximo del machote, asumir que es de hoy
-    const ticketNum = parseInt(ticketLower.replace(/\D/g, ''));
-    if (!isNaN(ticketNum) && maxFolioNum > 0 && ticketNum > maxFolioNum) {
-      Logger.log('Folio ' + ticket + ' no está en machote pero es mayor al máximo (' + maxFolioNum + ') — asumiendo hoy ✅');
-      return true;
+    // Si el prefijo existe y su número es mayor al máximo de ese prefijo → hoy
+    if (ticketPrefix && !isNaN(ticketNum) && maxPorPrefijo[ticketPrefix] !== undefined) {
+      if (ticketNum > maxPorPrefijo[ticketPrefix]) {
+        Logger.log('Folio ' + ticket + ' no está en machote pero ' + ticketNum +
+          ' > max de ' + ticketPrefix + ' (' + maxPorPrefijo[ticketPrefix] + ') — asumiendo hoy ✅');
+        return true;
+      }
+      // El prefijo existe pero el número está dentro del rango → debería estar en la lista y no está
+      Logger.log('Folio ' + ticket + ' tiene prefijo conocido pero número dentro del rango — rechazado ❌');
+      return false;
     }
 
+    // Prefijo desconocido (sucursal nueva) — rechazar para no abrir huecos
+    Logger.log('Folio ' + ticket + ' tiene prefijo desconocido — rechazado ❌');
     return false;
+
   } catch(err) {
     // Si no puede acceder al machote, dejar pasar (para no bloquear)
     Logger.log('Error validando folio: ' + err);
