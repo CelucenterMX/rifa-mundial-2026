@@ -123,14 +123,6 @@ function registrarRifa(params) {
 
   const datos = hoja.getDataRange().getValues();
 
-  // Validar que el ticket exista en el machote de ventas (folios reales)
-  if (!validarFolioMachote(ticket)) {
-    return jsonResponse({
-      success: false,
-      message: 'Este numero de ticket no es valido. Verifica que sea el folio correcto de tu ticket de compra.'
-    });
-  }
-
   // Verificar que el ticket no haya sido usado
   for (let i = 1; i < datos.length; i++) {
     if (String(datos[i][5]).toLowerCase() === ticket.toLowerCase()) {
