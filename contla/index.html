@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rifa Mundialista 2026 — CeluCenter Contla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   VARIABLES & RESET
+   ============================================================ */
+:root {
+  --cc-green: #00a651;
+  --cc-green-dark: #008c44;
+  --cc-green-light: #00c95e;
+  --cc-gold: #ffd700;
+  --cc-gold-dark: #e6c200;
+  --bg-dark: #0a1628;
+  --bg-card: rgba(255,255,255,0.06);
+  --bg-card-hover: rgba(255,255,255,0.1);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255,255,255,0.7);
+  --text-muted: rgba(255,255,255,0.45);
+  --border-color: rgba(255,255,255,0.1);
+  --success: #00e676;
+  --error: #ff5252;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0a1628 0%, #112240 50%, #0a1628 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.header {
+  background: linear-gradient(135deg, var(--cc-green-dark), var(--cc-green), var(--cc-green-light));
+  padding: 20px 20px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0,166,81,0.4);
+}
+
+.header-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.header-subtitle {
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.9;
+  margin-top: 2px;
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main-content {
+  padding: 20px 16px 60px;
+  max-width: 600px;
+  margin: 0 auto;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ============================================================
+   PRIZE CARD (special gold styling)
+   ============================================================ */
+.card-prize {
+  background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,215,0,0.04));
+  border: 1.5px solid rgba(255,215,0,0.35);
+  box-shadow: 0 0 30px rgba(255,215,0,0.08);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-prize::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, transparent 40%, rgba(255,215,0,0.05) 50%, transparent 60%);
+  background-size: 200% 200%;
+  animation: shimmer 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.prize-label {
+  font-size: 0.8rem;
+  color: var(--cc-gold);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.prize-match {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.prize-details {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.prize-venue {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ============================================================
+   HOW TO PARTICIPATE
+   ============================================================ */
+.steps-list {
+  list-style: none;
+  counter-reset: steps;
+}
+
+.steps-list li {
+  counter-increment: steps;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.steps-list li:last-child { margin-bottom: 0; }
+
+.steps-list li::before {
+  content: counter(steps);
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, var(--cc-green), var(--cc-green-light));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ============================================================
+   FORM
+   ============================================================ */
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  transition: border-color 0.3s;
+  outline: none;
+}
+
+.form-group input::placeholder { color: var(--text-muted); }
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--cc-green);
+  box-shadow: 0 0 0 3px rgba(0,166,81,0.15);
+}
+
+.form-group select option { background: #1a2744; color: #fff; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--cc-green), var(--cc-green-light));
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0,166,81,0.4);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,166,81,0.5); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ============================================================
+   ALERTS
+   ============================================================ */
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  margin-bottom: 14px;
+  display: none;
+}
+.alert.show { display: block; animation: fadeIn 0.3s; }
+.alert-success { background: rgba(0,230,118,0.12); border: 1px solid rgba(0,230,118,0.3); color: var(--success); }
+.alert-error { background: rgba(255,82,82,0.12); border: 1px solid rgba(255,82,82,0.3); color: var(--error); }
+
+/* ============================================================
+   CONFIRMATION (post-registro)
+   ============================================================ */
+.confirmation {
+  display: none;
+  text-align: center;
+  animation: fadeIn 0.4s ease;
+}
+
+.confirmation.show { display: block; }
+
+.confirmation-icon {
+  font-size: 3rem;
+  margin-bottom: 10px;
+}
+
+.confirmation-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: var(--success);
+}
+
+.boleto-container {
+  background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,215,0,0.05));
+  border: 2px solid var(--cc-gold);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 16px 0;
+  animation: pulse 2s ease-in-out 1;
+}
+
+.boleto-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 6px;
+}
+
+.boleto-number {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--cc-gold);
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 20px rgba(255,215,0,0.3);
+}
+
+.confirmation-note {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 14px;
+  line-height: 1.6;
+}
+
+.confirmation-luck {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cc-gold);
+  margin-top: 16px;
+}
+
+/* ============================================================
+   SORTEO EN VIVO CARD
+   ============================================================ */
+.card-sorteo {
+  background: linear-gradient(135deg, rgba(255,0,80,0.12), rgba(255,0,80,0.04));
+  border: 1.5px solid rgba(255,0,80,0.35);
+  text-align: center;
+}
+
+.sorteo-tiktok {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ff0050;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.sorteo-fecha {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.sorteo-cuenta {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #25f4ee;
+  margin-bottom: 10px;
+}
+
+.sorteo-nota {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   ADDRESS BONUS HINT
+   ============================================================ */
+.address-hint {
+  font-size: 0.78rem;
+  color: var(--cc-gold);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-color);
+}
+
+/* ============================================================
+   GOOGLE PLACES AUTOCOMPLETE DROPDOWN STYLING
+   ============================================================ */
+.pac-container {
+  background-color: #1a2744 !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+  font-family: 'Poppins', sans-serif !important;
+  margin-top: 4px !important;
+}
+
+.pac-item {
+  border-top: 1px solid rgba(255,255,255,0.08) !important;
+  padding: 8px 14px !important;
+  color: rgba(255,255,255,0.8) !important;
+  font-size: 0.85rem !important;
+  cursor: pointer !important;
+}
+
+.pac-item:first-child {
+  border-top: none !important;
+}
+
+.pac-item:hover {
+  background-color: rgba(255,255,255,0.1) !important;
+}
+
+.pac-item-selected {
+  background-color: rgba(0,166,81,0.2) !important;
+}
+
+.pac-item-query {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+.pac-matched {
+  color: var(--cc-green) !important;
+  font-weight: 600 !important;
+}
+
+.pac-icon {
+  filter: invert(1) brightness(0.8) !important;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (min-width: 768px) {
+  .header { padding: 24px 20px; }
+  .header-title { font-size: 1.6rem; }
+  .main-content { padding: 30px 20px 60px; }
+  .prize-match { font-size: 1.8rem; }
+  .boleto-number { font-size: 2.8rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="header">
+  <div class="header-title">Rifa Mundialista 2026</div>
+  <div class="header-subtitle">CeluCenter Contla — Gana tu boleto al Mundial</div>
+</header>
+
+<!-- ============================================================
+     MAIN CONTENT
+     ============================================================ -->
+<main class="main-content">
+
+  <!-- CARD: EL PREMIO -->
+  <div class="card card-prize">
+    <div class="prize-label">El Premio</div>
+    <div class="prize-match">&#127472;&#127479; Corea del Sur vs Rep. Checa &#127464;&#127487;</div>
+    <div class="prize-details">11 de Junio 2026 &middot; 20:00 hrs</div>
+    <div class="prize-venue">Estadio Akron, Guadalajara</div>
+  </div>
+
+  <!-- CARD: COMO PARTICIPAR -->
+  <div class="card">
+    <div class="card-title">Como participar</div>
+    <ol class="steps-list">
+      <li>Registrate con tu nombre y telefono</li>
+      <li>Agrega tu direccion para obtener un boleto extra</li>
+      <li>Recibe tu(s) numero(s) de boleto automaticamente</li>
+      <li>Sintoniza el sorteo EN VIVO por TikTok el 5 de junio</li>
+    </ol>
+  </div>
+
+  <!-- CARD: SORTEO EN VIVO -->
+  <div class="card card-sorteo">
+    <div class="card-title">Sorteo EN VIVO</div>
+    <div class="sorteo-tiktok">TikTok Live</div>
+    <div class="sorteo-fecha">Viernes 5 de Junio &middot; 6:00 PM</div>
+    <div class="sorteo-cuenta">@celucenter</div>
+    <div class="sorteo-nota">El ganador se anunciara en vivo. No te lo pierdas!</div>
+  </div>
+
+  <!-- CARD: FORMULARIO DE REGISTRO -->
+  <div class="card" id="formCard">
+    <div class="card-title">Registrate para participar</div>
+
+    <div id="rifaAlert" class="alert"></div>
+
+    <div id="registroForm">
+      <div class="form-group">
+        <label for="regNombre">Nombre completo</label>
+        <input type="text" id="regNombre" placeholder="Tu nombre completo" autocomplete="name">
+      </div>
+
+      <div class="form-group">
+        <label for="regTelefono">Telefono WhatsApp (10 digitos)</label>
+        <input type="tel" id="regTelefono" placeholder="3311234567" maxlength="10" inputmode="numeric" autocomplete="tel">
+      </div>
+
+      <div class="form-group">
+        <label for="regDireccion">Direccion (opcional)</label>
+        <input type="text" id="regDireccion" placeholder="Escribe tu direccion..." autocomplete="off">
+        <div class="address-hint">Agrega tu direccion y obten un boleto extra!</div>
+      </div>
+
+      <button class="btn btn-primary" id="btnRegistrar" onclick="registrarContla()">Participar en la Rifa</button>
+    </div>
+
+    <!-- CONFIRMACION POST-REGISTRO -->
+    <div class="confirmation" id="confirmacion">
+      <div class="confirmation-icon">&#127942;</div>
+      <div class="confirmation-title" id="confirmTitle">Estas participando!</div>
+      <div id="boletosContainer"></div>
+      <div class="confirmation-note" id="confirmNote">
+        Guarda tu(s) numero(s). El sorteo sera EN VIVO por TikTok (@celucenter) el viernes 5 de junio a las 6:00 PM.
+      </div>
+      <div class="confirmation-luck">Mucha suerte!</div>
+    </div>
+  </div>
+
+  <!-- CARD: CONSULTAR MIS BOLETOS -->
+  <div class="card">
+    <div class="card-title">Consultar mis boletos</div>
+    <div id="consultaAlert" class="alert"></div>
+    <div class="form-group">
+      <label for="consultaTel">Telefono WhatsApp (10 digitos)</label>
+      <input type="tel" id="consultaTel" placeholder="3311234567" maxlength="10" inputmode="numeric">
+    </div>
+    <button class="btn btn-primary" id="btnConsultar" onclick="consultarBoletos()">Ver mis boletos</button>
+    <div id="resultadoBoletos" style="display:none; margin-top:16px;"></div>
+  </div>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer">
+  CeluCenter 2026 — Tu conexion favorita
+</footer>
+
+<!-- ============================================================
+     GOOGLE PLACES API
+     ============================================================ -->
+<script>
+function initAutocomplete() {
+  const input = document.getElementById('regDireccion');
+  const autocomplete = new google.maps.places.Autocomplete(input, {
+    componentRestrictions: { country: 'mx' },
+    fields: ['formatted_address']
+  });
+
+  autocomplete.addListener('place_changed', function() {
+    const place = autocomplete.getPlace();
+    if (place.formatted_address) {
+      input.value = place.formatted_address;
+    }
+  });
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjgHiw7whcQQPy1JdJTHvTDg97xUBQ5WE&libraries=places&callback=initAutocomplete" async defer></script>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+// =============================================
+// CONFIG
+// =============================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJ09Ovgsq9mg6VryzKD4ez0Da2YOstYmVB5Rpx8_ISihV3CgtOZmnIp2Iu-LDlD1TT/exec';
+
+// =============================================
+// HELPERS
+// =============================================
+function showAlert(id, msg, type) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'alert alert-' + type + ' show';
+  setTimeout(() => { el.classList.remove('show'); }, 5000);
+}
+
+function setLoading(loading) {
+  const btn = document.getElementById('btnRegistrar');
+  btn.disabled = loading;
+  btn.textContent = loading ? 'Registrando...' : 'Participar en la Rifa';
+}
+
+function showConfirmation(data) {
+  document.getElementById('registroForm').style.display = 'none';
+  document.getElementById('rifaAlert').className = 'alert';
+
+  const nombre = data.nombre.split(' ')[0];
+  document.getElementById('confirmTitle').textContent = 'Estas participando, ' + nombre + '!';
+
+  // Build boleto cards
+  const container = document.getElementById('boletosContainer');
+  let html = '';
+
+  if (data.boleto1) {
+    html += '<div class="boleto-container">';
+    html += '<div class="boleto-label">Boleto 1</div>';
+    html += '<div class="boleto-number">' + data.boleto1 + '</div>';
+    html += '</div>';
+  }
+
+  if (data.boleto2) {
+    html += '<div class="boleto-container">';
+    html += '<div class="boleto-label">Boleto 2 — Bonus por direccion</div>';
+    html += '<div class="boleto-number">' + data.boleto2 + '</div>';
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
+  document.getElementById('confirmacion').classList.add('show');
+}
+
+// =============================================
+// CONSULTAR BOLETOS
+// =============================================
+function consultarBoletos() {
+  const tel = document.getElementById('consultaTel').value.trim();
+  if (!/^\d{10}$/.test(tel)) {
+    showAlert('consultaAlert', 'Ingresa un telefono valido de 10 digitos', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btnConsultar');
+  btn.disabled = true;
+  btn.textContent = 'Buscando...';
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action: 'consultar_boletos_contla', telefono: tel }),
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    redirect: 'follow'
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.disabled = false;
+    btn.textContent = 'Ver mis boletos';
+    const div = document.getElementById('resultadoBoletos');
+    if (data.success && data.boletos && data.boletos.length > 0) {
+      let html = '<div style="color:var(--cc-gold);font-weight:700;margin-bottom:10px;">' + data.nombre + ' — ' + data.boletos.length + ' boleto(s)</div>';
+      data.boletos.forEach(b => {
+        html += '<div class="boleto-container" style="margin-bottom:10px;padding:12px;">';
+        html += '<div class="boleto-number" style="font-size:1.5rem;">' + b + '</div>';
+        html += '</div>';
+      });
+      div.innerHTML = html;
+    } else {
+      div.innerHTML = '<div style="color:var(--text-secondary);font-size:0.85rem;">No se encontraron boletos con ese telefono.</div>';
+    }
+    div.style.display = 'block';
+  })
+  .catch(() => {
+    btn.disabled = false;
+    btn.textContent = 'Ver mis boletos';
+  });
+}
+
+// =============================================
+// VALIDACION & REGISTRO
+// =============================================
+function registrarContla() {
+  const nombre = document.getElementById('regNombre').value.trim();
+  const telefono = document.getElementById('regTelefono').value.trim();
+  const direccion = document.getElementById('regDireccion').value.trim();
+
+  // Validaciones frontend
+  if (nombre.length < 3) return showAlert('rifaAlert', 'Ingresa tu nombre completo (minimo 3 caracteres)', 'error');
+  if (!/^\d{10}$/.test(telefono)) return showAlert('rifaAlert', 'Ingresa un telefono valido de 10 digitos', 'error');
+
+  setLoading(true);
+
+  const body = JSON.stringify({
+    action: 'registrar_contla',
+    nombre: nombre,
+    telefono: telefono,
+    direccion: direccion
+  });
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    body: body,
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    redirect: 'follow'
+  })
+  .then(r => r.json())
+  .then(data => {
+    setLoading(false);
+    if (data.success) {
+      showConfirmation(data);
+    } else {
+      showAlert('rifaAlert', data.message || 'Error al registrar. Intenta de nuevo.', 'error');
+    }
+  })
+  .catch(err => {
+    setLoading(false);
+    showAlert('rifaAlert', 'Error de conexion. Verifica tu internet e intenta de nuevo.', 'error');
+    console.error('Error:', err);
+  });
+}
+
+// Enter key submits form
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !document.getElementById('btnRegistrar').disabled) {
+    registrarContla();
+  }
+});
+</script>
+</body>
+</html>
