@@ -388,6 +388,46 @@ body {
 }
 
 /* ============================================================
+   GOOGLE PLACES AUTOCOMPLETE STYLING
+   ============================================================ */
+.address-wrapper {
+  position: relative;
+}
+
+.address-wrapper gmp-place-autocomplete {
+  width: 100%;
+  --gmpx-color-surface: rgba(255,255,255,0.08);
+  --gmpx-color-on-surface: #ffffff;
+  --gmpx-color-on-surface-variant: rgba(255,255,255,0.45);
+  --gmpx-color-primary: var(--cc-green);
+  --gmpx-font-family-base: 'Poppins', sans-serif;
+  --gmpx-font-size-base: 0.9rem;
+}
+
+.address-wrapper gmp-place-autocomplete::part(input) {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.address-wrapper gmp-place-autocomplete::part(input):focus {
+  border-color: var(--cc-green);
+  box-shadow: 0 0 0 3px rgba(0,166,81,0.15);
+}
+
+/* Fallback input (when Maps fails to load) */
+#regDireccionFallback {
+  display: none;
+}
+
+/* ============================================================
    FOOTER
    ============================================================ */
 .footer {
@@ -409,6 +449,13 @@ body {
   .boleto-number { font-size: 2.8rem; }
 }
 </style>
+<!-- Google Maps JS API Loader -->
+<script>
+(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+  key: "AIzaSyCjgHiw7whcQQPy1JdJTHvTDg97xUBQ5WE",
+  v: "weekly"
+});
+</script>
 </head>
 <body>
 
@@ -471,8 +518,12 @@ body {
       </div>
 
       <div class="form-group">
-        <label for="regDireccion">Direccion (opcional)</label>
-        <input type="text" id="regDireccion" placeholder="Ej: Calle Morelos 123, Contla" autocomplete="street-address">
+        <label>Direccion (opcional)</label>
+        <div class="address-wrapper">
+          <div id="autocompleteContainer"></div>
+          <input type="text" id="regDireccionFallback" placeholder="Ej: Calle Morelos 123, Contla" autocomplete="street-address">
+        </div>
+        <input type="hidden" id="regDireccion" value="">
         <div class="address-hint">Agrega tu direccion y obten un boleto extra!</div>
       </div>
 
@@ -660,6 +711,62 @@ document.addEventListener('keydown', function(e) {
     registrarContla();
   }
 });
+
+// =============================================
+// GOOGLE PLACES AUTOCOMPLETE
+// =============================================
+async function initAutocomplete() {
+  try {
+    const { PlaceAutocompleteElement } = await google.maps.importLibrary('places');
+
+    const autocomplete = new PlaceAutocompleteElement();
+    autocomplete.includedRegionCodes = ['mx'];
+    autocomplete.locationBias = {
+      center: { lat: 20.25, lng: -103.35 },
+      radius: 150000
+    };
+
+    document.getElementById('autocompleteContainer').appendChild(autocomplete);
+
+    // When user selects a suggestion, store the formatted address
+    autocomplete.addEventListener('gmp-select', async ({ placePrediction }) => {
+      const place = placePrediction.toPlace();
+      await place.fetchFields({ fields: ['formattedAddress'] });
+      document.getElementById('regDireccion').value = place.formattedAddress || '';
+    });
+
+    // Also allow user to type freely without selecting a suggestion
+    // Poll the inner input to keep hidden field in sync
+    const observer = new MutationObserver(() => {
+      const inner = autocomplete.querySelector('input') || autocomplete.shadowRoot?.querySelector('input');
+      if (inner && !inner._listening) {
+        inner._listening = true;
+        inner.addEventListener('input', () => {
+          document.getElementById('regDireccion').value = inner.value;
+        });
+        inner.addEventListener('blur', () => {
+          // On blur, if hidden field is empty but inner has text, sync it
+          if (!document.getElementById('regDireccion').value && inner.value.trim()) {
+            document.getElementById('regDireccion').value = inner.value.trim();
+          }
+        });
+      }
+    });
+    observer.observe(document.getElementById('autocompleteContainer'), { childList: true, subtree: true });
+
+  } catch (err) {
+    console.warn('Google Places no disponible, usando input de texto:', err);
+    document.getElementById('autocompleteContainer').style.display = 'none';
+    var fallback = document.getElementById('regDireccionFallback');
+    fallback.style.display = 'block';
+    fallback.addEventListener('input', function() {
+      document.getElementById('regDireccion').value = this.value;
+    });
+  }
+}
+
+initAutocomplete();
 </script>
+
 </body>
 </html>
