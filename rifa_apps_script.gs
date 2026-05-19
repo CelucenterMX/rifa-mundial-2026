@@ -80,6 +80,15 @@ function doPost(e) {
     return consultarBoletos(params);
   }
 
+  // Acciones Contla (funciones en contla.gs)
+  if (action === 'registrar_contla') {
+    return registrarContla(params);
+  }
+
+  if (action === 'consultar_boletos_contla') {
+    return consultarBoletosContla(params);
+  }
+
   return jsonResponse({ success: false, message: 'Accion no valida' });
 }
 
