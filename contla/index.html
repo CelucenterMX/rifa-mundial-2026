@@ -399,49 +399,14 @@ body {
 }
 
 /* ============================================================
-   GOOGLE PLACES AUTOCOMPLETE DROPDOWN STYLING
+   GOOGLE PLACES AUTOCOMPLETE (New API) STYLING
    ============================================================ */
-.pac-container {
-  background-color: #1a2744 !important;
-  border: 1px solid rgba(255,255,255,0.15) !important;
-  border-radius: 8px !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
-  font-family: 'Poppins', sans-serif !important;
-  margin-top: 4px !important;
+#autocomplete-container {
+  width: 100%;
 }
 
-.pac-item {
-  border-top: 1px solid rgba(255,255,255,0.08) !important;
-  padding: 8px 14px !important;
-  color: rgba(255,255,255,0.8) !important;
-  font-size: 0.85rem !important;
-  cursor: pointer !important;
-}
-
-.pac-item:first-child {
-  border-top: none !important;
-}
-
-.pac-item:hover {
-  background-color: rgba(255,255,255,0.1) !important;
-}
-
-.pac-item-selected {
-  background-color: rgba(0,166,81,0.2) !important;
-}
-
-.pac-item-query {
-  color: #ffffff !important;
-  font-weight: 500 !important;
-}
-
-.pac-matched {
-  color: var(--cc-green) !important;
-  font-weight: 600 !important;
-}
-
-.pac-icon {
-  filter: invert(1) brightness(0.8) !important;
+#autocomplete-container gmp-place-autocomplete {
+  width: 100%;
 }
 
 /* ============================================================
@@ -517,8 +482,9 @@ body {
       </div>
 
       <div class="form-group">
-        <label for="regDireccion">Direccion (opcional)</label>
-        <input type="text" id="regDireccion" placeholder="Escribe tu direccion..." autocomplete="off">
+        <label>Direccion (opcional)</label>
+        <div id="autocomplete-container"></div>
+        <input type="hidden" id="regDireccion">
         <div class="address-hint">Agrega tu direccion y obten un boleto extra!</div>
       </div>
 
@@ -559,25 +525,32 @@ body {
 </footer>
 
 <!-- ============================================================
-     GOOGLE PLACES API
+     GOOGLE PLACES API (New) — PlaceAutocompleteElement
      ============================================================ -->
 <script>
-function initAutocomplete() {
-  const input = document.getElementById('regDireccion');
-  const autocomplete = new google.maps.places.Autocomplete(input, {
-    componentRestrictions: { country: 'mx' },
-    fields: ['formatted_address']
+(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"-"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.googleapis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+  key:"AIzaSyCjgHiw7whcQQPy1JdJTHvTDg97xUBQ5WE",
+  v:"weekly"
+});
+
+async function initAutocomplete() {
+  await google.maps.importLibrary("places");
+
+  const autocomplete = new google.maps.places.PlaceAutocompleteElement({
+    componentRestrictions: { country: "mx" },
   });
 
-  autocomplete.addListener('place_changed', function() {
-    const place = autocomplete.getPlace();
-    if (place.formatted_address) {
-      input.value = place.formatted_address;
-    }
+  autocomplete.style.width = "100%";
+  document.getElementById("autocomplete-container").appendChild(autocomplete);
+
+  autocomplete.addEventListener("gmp-placeselect", async ({ place }) => {
+    await place.fetchFields({ fields: ["formattedAddress"] });
+    document.getElementById("regDireccion").value = place.formattedAddress || "";
   });
 }
+
+initAutocomplete();
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCjgHiw7whcQQPy1JdJTHvTDg97xUBQ5WE&libraries=places&callback=initAutocomplete" async defer></script>
 
 <!-- ============================================================
      JAVASCRIPT
