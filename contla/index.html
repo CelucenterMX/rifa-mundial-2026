@@ -399,17 +399,6 @@ body {
 }
 
 /* ============================================================
-   GOOGLE PLACES AUTOCOMPLETE (New API) STYLING
-   ============================================================ */
-#autocomplete-container {
-  width: 100%;
-}
-
-#autocomplete-container gmp-place-autocomplete {
-  width: 100%;
-}
-
-/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (min-width: 768px) {
@@ -482,9 +471,8 @@ body {
       </div>
 
       <div class="form-group">
-        <label>Direccion (opcional)</label>
-        <div id="autocomplete-container"></div>
-        <input type="hidden" id="regDireccion">
+        <label for="regDireccion">Direccion (opcional)</label>
+        <input type="text" id="regDireccion" placeholder="Ej: Calle Morelos 123, Contla" autocomplete="street-address">
         <div class="address-hint">Agrega tu direccion y obten un boleto extra!</div>
       </div>
 
@@ -524,33 +512,6 @@ body {
   CeluCenter 2026 — Tu conexion favorita
 </footer>
 
-<!-- ============================================================
-     GOOGLE PLACES API (New) — PlaceAutocompleteElement
-     ============================================================ -->
-<script>
-(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"-"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.googleapis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-  key:"AIzaSyCjgHiw7whcQQPy1JdJTHvTDg97xUBQ5WE",
-  v:"weekly"
-});
-
-async function initAutocomplete() {
-  await google.maps.importLibrary("places");
-
-  const autocomplete = new google.maps.places.PlaceAutocompleteElement({
-    componentRestrictions: { country: "mx" },
-  });
-
-  autocomplete.style.width = "100%";
-  document.getElementById("autocomplete-container").appendChild(autocomplete);
-
-  autocomplete.addEventListener("gmp-placeselect", async ({ place }) => {
-    await place.fetchFields({ fields: ["formattedAddress"] });
-    document.getElementById("regDireccion").value = place.formattedAddress || "";
-  });
-}
-
-initAutocomplete();
-</script>
 
 <!-- ============================================================
      JAVASCRIPT

@@ -2,9 +2,45 @@
 // RIFA MUNDIALISTA 2026 — CeluCenter Contla
 // Funciones para la rifa de Contla (se integran al doPost principal)
 //
-// Usa la misma pestana "Rifa" y numeracion RIFA-XXXX consecutiva
-// Sucursal = "Contla", Direccion va en campo Ticket
+// Registra en AMBAS pestanas:
+// - "Rifa" → con RIFA-XXXX consecutivo (junto con todos)
+// - "Rifa Contla" → con datos completos de Contla
 // ============================================================
+
+const HOJA_CONTLA = 'Rifa Contla';
+
+// =============================================
+// SETUP — Ejecutar una vez para crear la pestana Rifa Contla
+// =============================================
+function setupHojaContla() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let hoja = ss.getSheetByName(HOJA_CONTLA);
+
+  if (!hoja) {
+    hoja = ss.insertSheet(HOJA_CONTLA);
+  }
+
+  const headers = ['Timestamp', 'Nombre', 'Telefono', 'Direccion', 'Boletos', 'Boleto1', 'Boleto2'];
+  hoja.getRange(1, 1, 1, headers.length).setValues([headers]);
+
+  const headerRange = hoja.getRange(1, 1, 1, headers.length);
+  headerRange.setFontWeight('bold');
+  headerRange.setBackground('#00a651');
+  headerRange.setFontColor('#ffffff');
+  headerRange.setHorizontalAlignment('center');
+
+  hoja.setColumnWidth(1, 180);
+  hoja.setColumnWidth(2, 200);
+  hoja.setColumnWidth(3, 130);
+  hoja.setColumnWidth(4, 300);
+  hoja.setColumnWidth(5, 80);
+  hoja.setColumnWidth(6, 140);
+  hoja.setColumnWidth(7, 140);
+
+  hoja.setFrozenRows(1);
+
+  SpreadsheetApp.getUi().alert('Hoja "Rifa Contla" configurada correctamente.');
+}
 
 // =============================================
 // REGISTRAR PARTICIPANTE — CONTLA
@@ -57,6 +93,12 @@ function registrarContla(params) {
     const siguienteNumero2 = siguienteNumero + 1;
     boleto2 = 'RIFA-' + String(siguienteNumero2).padStart(4, '0');
     hoja.appendRow([timestamp, nombre, telefono, '', 'Contla', 'Bonus direccion', boleto2]);
+  }
+
+  // Tambien guardar en pestana "Rifa Contla"
+  var hojaContla = ss.getSheetByName(HOJA_CONTLA);
+  if (hojaContla) {
+    hojaContla.appendRow([timestamp, nombre, telefono, direccion, cantBoletos, boleto1, boleto2 || '']);
   }
 
   return jsonResponse({
